@@ -6,9 +6,16 @@ Windows 托盘应用，用来随时看到 Cursor 套餐用量。形态接近 mac
 
 ## 下载
 
-- 安装包：[CursorBar-0.1.0-win-x64.zip](https://git.woa.com/rayyzhang/CursorBar-win/raw/main/releases/CursorBar-0.1.0-win-x64.zip)
-- ARM 电脑：[CursorBar-0.1.0-win-arm64.zip](https://git.woa.com/rayyzhang/CursorBar-win/raw/main/releases/CursorBar-0.1.0-win-arm64.zip)
-- 仓库：[git.woa.com/rayyzhang/CursorBar-win](https://git.woa.com/rayyzhang/CursorBar-win)
+push 到 `main` 后，GitHub Actions 会在 Windows 上自动打包，并挂到 Release：
+
+- 普通电脑：[CursorBar-0.1.0-win-x64.zip](https://github.com/VaCameos/cursor-bar-win/releases/latest/download/CursorBar-0.1.0-win-x64.zip)
+- ARM 电脑：[CursorBar-0.1.0-win-arm64.zip](https://github.com/VaCameos/cursor-bar-win/releases/latest/download/CursorBar-0.1.0-win-arm64.zip)
+- GitHub：[github.com/VaCameos/cursor-bar-win](https://github.com/VaCameos/cursor-bar-win)
+- 工蜂：[git.woa.com/rayyzhang/CursorBar-win](https://git.woa.com/rayyzhang/CursorBar-win)
+
+如果配置了仓库 Secrets 里的 `WOA_TOKEN`，同一份 zip 也会提交回工蜂的 `releases/`，可用：
+
+- [工蜂 raw x64](https://git.woa.com/rayyzhang/CursorBar-win/raw/main/releases/CursorBar-0.1.0-win-x64.zip)
 
 解压后双击 **CursorBar.exe**。想装进开始菜单的话，右键 `install.ps1` → 使用 PowerShell 运行。
 
@@ -60,13 +67,15 @@ Windows 托盘应用，用来随时看到 Cursor 套餐用量。形态接近 mac
 
 ## 给别人发包
 
-更新仓库里的 `releases/CursorBar-*.zip` 即可。本地打 Windows 包：
+平时不用本地打。推 `main` 到 GitHub 后，Actions 会出 zip 并更新 Release。
+
+工蜂本身没有 Windows runner。要让工蜂 `releases/` 也自动更新，到 GitHub 仓库 **Settings → Secrets and variables → Actions** 加一个 `WOA_TOKEN`（工蜂个人设置里的私人令牌，勾选 `api` / 写仓库权限）。
+
+本地仍可打：
 
 ```powershell
 powershell -File scripts/package.ps1
 ```
-
-会生成 `dist/CursorBar-0.1.0-win-x64.zip`，并复制到 `releases/`。提交推送后，别人就能从上面的链接下载。
 
 ### 第一次打不开是正常的
 

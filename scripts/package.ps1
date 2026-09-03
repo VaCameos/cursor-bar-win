@@ -39,6 +39,8 @@ function Publish-Rid([string]$rid) {
 Publish-Rid "win-x64"
 Publish-Rid "win-arm64"
 
+Set-Content -Path (Join-Path $root "dist\version.txt") -Value $version -NoNewline
+
 $releases = Join-Path $root "releases"
 New-Item -ItemType Directory -Force -Path $releases | Out-Null
 Copy-Item (Join-Path $root "dist\CursorBar-$version-win-x64.zip") $releases -Force

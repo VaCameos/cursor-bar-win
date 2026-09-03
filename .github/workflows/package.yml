@@ -1,0 +1,69 @@
+name: Package
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Package
+        run: powershell -File scripts/package.ps1
+
+      - name: Read version
+        shell: pwsh
+        run: |
+          $version = (Get-Content dist/version.txt -Raw).Trim()
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Get-ChildItem dist, releases -Filter *.zip | Format-Table Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CursorBar-windows
+          path: dist/CursorBar-*.zip
+
+      - name: Publish GitHub Release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: CursorBar ${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
+          files: |
+            dist/CursorBar-${{ env.VERSION }}-win-x64.zip
+            dist/CursorBar-${{ env.VERSION }}-win-arm64.zip
+          generate_release_notes: true
+          make_latest: true
+
+      - name: Publish zips to WOA
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          WOA_TOKEN: ${{ secrets.WOA_TOKEN }}
+        run: |
+          if [ -z "$WOA_TOKEN" ]; then
+            echo "WOA_TOKEN not set, skip syncing zips to 工蜂"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add releases/*.zip
+          if git diff --cached --quiet; then
+            echo "No zip changes"
+            exit 0
+          fi
+          git commit -m "Add Windows zip packages."
+          git remote add woa "https://oauth2:${WOA_TOKEN}@git.woa.com/rayyzhang/CursorBar-win.git"
+          git push woa HEAD:main
