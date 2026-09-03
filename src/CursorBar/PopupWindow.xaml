@@ -1,0 +1,75 @@
+<Window x:Class="CursorBar.PopupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cursor Bar"
+        Width="332"
+        SizeToContent="Height"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        ResizeMode="NoResize"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
+    <Border Margin="6" CornerRadius="12" Padding="16"
+            Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+            BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+            BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="18" ShadowDepth="1" Opacity="0.28" Color="#FF000000"/>
+        </Border.Effect>
+        <StackPanel x:Name="Root">
+            <DockPanel LastChildFill="True" Margin="0,0,0,12">
+                <Border x:Name="MembershipBadge" DockPanel.Dock="Right" CornerRadius="10"
+                        Padding="8,3" Margin="8,0,0,0" VerticalAlignment="Top"
+                        Background="#238A63FF" Visibility="Collapsed">
+                    <TextBlock x:Name="MembershipText" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                </Border>
+                <StackPanel>
+                    <TextBlock Text="Cursor Bar" FontSize="15" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="EmailText" FontSize="11" Margin="0,2,0,0"
+                               Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </DockPanel>
+
+            <StackPanel x:Name="MetersHost" Margin="0,0,0,10"/>
+
+            <TextBlock x:Name="StateText" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10"
+                       Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+
+            <UniformGrid Columns="2" Margin="0,0,0,12">
+                <Button x:Name="RefreshButton" Style="{StaticResource QuietButton}" Margin="0,0,4,0"
+                        Click="RefreshClick"/>
+                <Button x:Name="DashboardButton" Style="{StaticResource QuietButton}" Margin="4,0,0,0"
+                        Click="DashboardClick"/>
+            </UniformGrid>
+
+            <Expander x:Name="SettingsExpander" Margin="0,0,0,8">
+                <StackPanel Margin="0,8,0,0">
+                    <CheckBox x:Name="ShowLabelBox" Margin="0,0,0,6" Checked="PreferenceChanged" Unchecked="PreferenceChanged"/>
+                    <CheckBox x:Name="ShowAmountBox" Margin="0,0,0,6" Checked="PreferenceChanged" Unchecked="PreferenceChanged"/>
+                    <CheckBox x:Name="ShowPercentBox" Margin="0,0,0,6" Checked="PreferenceChanged" Unchecked="PreferenceChanged"/>
+                    <CheckBox x:Name="LaunchBox" Margin="0,0,0,8" Checked="LaunchChanged" Unchecked="LaunchChanged"/>
+                    <DockPanel Margin="0,0,0,8">
+                        <TextBlock x:Name="RefreshLabel" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox x:Name="RefreshCombo" SelectionChanged="RefreshMinutesChanged"/>
+                    </DockPanel>
+                    <Expander x:Name="AdvancedExpander">
+                        <StackPanel Margin="0,8,0,0">
+                            <TextBlock x:Name="CookieLabel" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,6"
+                                       Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <PasswordBox x:Name="CookieBox" Padding="6,5" PasswordChanged="CookieChanged"/>
+                            <TextBlock x:Name="CookieHint" FontSize="10" TextWrapping="Wrap" Margin="0,6,0,0"
+                                       Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </Expander>
+
+            <Button x:Name="QuitButton" Style="{StaticResource LinkButton}" Click="QuitClick"/>
+        </StackPanel>
+    </Border>
+</Window>

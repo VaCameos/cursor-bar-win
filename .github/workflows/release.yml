@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Package
+        run: powershell -File scripts/package.ps1
+      - name: Upload release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/CursorBar-*-win-x64.zip
+            dist/CursorBar-*-win-arm64.zip
+          generate_release_notes: true
+          draft: ${{ github.event_name == 'workflow_dispatch' }}
