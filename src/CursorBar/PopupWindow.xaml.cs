@@ -2,10 +2,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Forms;
 using CursorBar.Core;
 using Color = System.Windows.Media.Color;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using Size = System.Windows.Size;
 
 namespace CursorBar;
 
@@ -43,8 +43,8 @@ public partial class PopupWindow : Window
         Measure(new Size(Width, double.PositiveInfinity));
         Arrange(new Rect(0, 0, Width, DesiredSize.Height));
         var scale = DeviceScale();
-        var mouse = Control.MousePosition;
-        var screen = Screen.FromPoint(mouse);
+        var mouse = System.Windows.Forms.Control.MousePosition;
+        var screen = System.Windows.Forms.Screen.FromPoint(mouse);
         var width = ActualWidth > 1 ? ActualWidth : 332;
         var height = Math.Max(ActualHeight, DesiredSize.Height);
         if (height < 80) height = 280;
@@ -245,7 +245,7 @@ public partial class PopupWindow : Window
             FontSize = 13,
         });
         block.Children.Add(header);
-        block.Children.Add(new ProgressBar
+        block.Children.Add(new System.Windows.Controls.ProgressBar
         {
             Value = unlimited ? 0 : Math.Clamp(percent ?? 0, 0, 100),
             Foreground = new SolidColorBrush(color),
