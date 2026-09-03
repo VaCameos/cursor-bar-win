@@ -15,7 +15,7 @@ public partial class PopupWindow : Window
     private bool _syncing;
     private bool _suppressDeactivate;
 
-    public PopupWindow(UsageStore store)
+    internal PopupWindow(UsageStore store)
     {
         _store = store;
         InitializeComponent();

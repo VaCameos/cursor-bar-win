@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
@@ -154,7 +155,7 @@ public static class CursorSessionResolver
         yield return Path.Combine(home, ".config", "cursor", "auth.json");
     }
 
-    private static bool TryReadCursorAppSession(string home, out CursorSession? session)
+    private static bool TryReadCursorAppSession(string home, [NotNullWhen(true)] out CursorSession? session)
     {
         session = null;
         foreach (var dbPath in CursorStateDatabases(home).Distinct(StringComparer.OrdinalIgnoreCase))
@@ -199,7 +200,7 @@ public static class CursorSessionResolver
         };
     }
 
-    private static bool TryReadAgentSession(string home, out CursorSession? session)
+    private static bool TryReadAgentSession(string home, [NotNullWhen(true)] out CursorSession? session)
     {
         session = null;
         foreach (var path in AgentAuthFiles(home))
