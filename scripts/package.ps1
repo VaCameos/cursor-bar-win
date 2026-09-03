@@ -26,7 +26,7 @@ function Publish-Rid([string]$rid) {
         -o $out
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    Copy-Item (Join-Path $root "scripts\使用说明.txt") (Join-Path $out "使用说明.txt")
+    Copy-Item (Join-Path $root "scripts\USAGE.txt") (Join-Path $out "USAGE.txt")
     Copy-Item (Join-Path $root "scripts\install.ps1") (Join-Path $out "install.ps1")
 
     $zipName = "CursorBar-$version-$rid.zip"
