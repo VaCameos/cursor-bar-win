@@ -13,11 +13,13 @@ internal sealed class TrayController : IDisposable
     private readonly UsageStore _store = new();
     private readonly NotifyIcon _notifyIcon;
     private readonly PopupWindow _popup;
+    private readonly FloatingBallWindow _ball;
     private Icon? _currentIcon;
 
     public TrayController()
     {
         _popup = new PopupWindow(_store);
+        _ball = new FloatingBallWindow(_store, ShowFromBall);
         _notifyIcon = new NotifyIcon
         {
             Visible = true,
@@ -29,11 +31,21 @@ internal sealed class TrayController : IDisposable
         Render();
     }
 
-    public void Start() => _store.Start();
+    public void Start()
+    {
+        _store.Start();
+        _ball.ApplyVisibility();
+    }
 
     public void ShowPopup()
     {
         _popup.ShowNearTray();
+    }
+
+    private void ShowFromBall()
+    {
+        var size = _ball.AnchorSize();
+        _popup.ShowNearAnchor(_ball.Left, _ball.Top, size.Width, size.Height);
     }
 
     private void OnMouseClick(object? sender, MouseEventArgs e)
@@ -75,6 +87,8 @@ internal sealed class TrayController : IDisposable
         var tip = BuildTip();
         _notifyIcon.Text = tip.Length <= 63 ? tip : tip[..63];
         _popup.RefreshContent();
+        _ball.Render();
+        _ball.ApplyVisibility();
     }
 
     private string BuildTip()
@@ -108,6 +122,7 @@ internal sealed class TrayController : IDisposable
         _notifyIcon.Dispose();
         _currentIcon?.Dispose();
         _store.Dispose();
+        _ball.Close();
         _popup.Close();
     }
 }

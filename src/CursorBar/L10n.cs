@@ -20,6 +20,10 @@ internal static class L10n
     public static string Quit => IsChinese ? "退出 Cursor Bar" : "Quit Cursor Bar";
     public static string Settings => IsChinese ? "设置" : "Settings";
     public static string LaunchAtLogin => IsChinese ? "登录时启动" : "Launch at login";
+    public static string ShowFloatingBall => IsChinese ? "显示悬浮球" : "Show floating ball";
+    public static string FloatingBallHint => IsChinese
+        ? "拖动可换位置，点击打开用量面板"
+        : "Drag to move, click to open the usage panel";
     public static string ShowPercent => IsChinese ? "托盘提示显示百分比" : "Show % in tray tip";
     public static string ShowAmount => IsChinese ? "托盘提示显示金额" : "Show $ in tray tip";
     public static string ShowLabel => IsChinese ? "托盘提示显示 Cursor 标识" : "Show Cursor label";

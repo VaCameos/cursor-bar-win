@@ -55,6 +55,7 @@ internal sealed class UsageStore : INotifyPropertyChanged, IDisposable
             OnPropertyChanged(nameof(ShowPercentInMenuBar));
             OnPropertyChanged(nameof(ShowAmountInMenuBar));
             OnPropertyChanged(nameof(ShowLabelInMenuBar));
+            OnPropertyChanged(nameof(ShowFloatingBall));
             OnPropertyChanged(nameof(RefreshMinutes));
             OnPropertyChanged(nameof(ManualCookie));
             OnPropertyChanged(nameof(StatusTitle));
@@ -93,6 +94,17 @@ internal sealed class UsageStore : INotifyPropertyChanged, IDisposable
     {
         get => Preferences.ManualCookie;
         set => Preferences = Preferences with { ManualCookie = value };
+    }
+
+    public bool ShowFloatingBall
+    {
+        get => Preferences.ShowFloatingBall;
+        set => Preferences = Preferences with { ShowFloatingBall = value };
+    }
+
+    public void SaveFloatingBallPosition(double left, double top)
+    {
+        Preferences = Preferences with { FloatingBallLeft = left, FloatingBallTop = top };
     }
 
     public double? StatusPercent => Snapshot?.HeadlinePercent;

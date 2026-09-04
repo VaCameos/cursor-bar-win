@@ -22,7 +22,9 @@ public partial class PopupWindow : Window
         ApplyStaticText();
         Deactivated += (_, _) =>
         {
-            if (!_suppressDeactivate) Hide();
+            if (_suppressDeactivate) return;
+            if ((DateTime.UtcNow - FloatingBallWindow.LastPointerDownUtc).TotalMilliseconds < 250) return;
+            Hide();
         };
         PreviewKeyDown += (_, e) =>
         {
@@ -33,32 +35,54 @@ public partial class PopupWindow : Window
 
     public void ShowNearTray()
     {
+        var scale = DeviceScale();
+        var mouse = System.Windows.Forms.Control.MousePosition;
+        ShowNearPoint(mouse.X / scale, mouse.Y / scale);
+    }
+
+    public void ShowNearAnchor(double anchorLeft, double anchorTop, double anchorWidth, double anchorHeight)
+    {
+        RefreshContent();
+        var size = MeasurePopup();
+        var work = SystemParameters.WorkArea;
+        var left = anchorLeft - size.Width - 8;
+        if (left < work.Left + 8) left = anchorLeft + anchorWidth + 8;
+        var top = anchorTop + (anchorHeight - size.Height) / 2;
+        Place(left, top, size.Width, size.Height);
+    }
+
+    private void ShowNearPoint(double x, double y)
+    {
+        RefreshContent();
+        var size = MeasurePopup();
+        var work = SystemParameters.WorkArea;
+        var left = x - size.Width / 2;
+        var top = y - size.Height - 12;
+        if (top < work.Top) top = y + 12;
+        Place(left, top, size.Width, size.Height);
+    }
+
+    private Size MeasurePopup()
+    {
+        Measure(new Size(Width, double.PositiveInfinity));
+        Arrange(new Rect(0, 0, Width, DesiredSize.Height));
+        var width = ActualWidth > 1 ? ActualWidth : 332;
+        var height = Math.Max(ActualHeight, DesiredSize.Height);
+        if (height < 80) height = 280;
+        return new Size(width, height);
+    }
+
+    private void Place(double left, double top, double width, double height)
+    {
         if (IsVisible)
         {
             Hide();
             return;
         }
 
-        RefreshContent();
-        Measure(new Size(Width, double.PositiveInfinity));
-        Arrange(new Rect(0, 0, Width, DesiredSize.Height));
-        var scale = DeviceScale();
-        var mouse = System.Windows.Forms.Control.MousePosition;
-        var screen = System.Windows.Forms.Screen.FromPoint(mouse);
-        var width = ActualWidth > 1 ? ActualWidth : 332;
-        var height = Math.Max(ActualHeight, DesiredSize.Height);
-        if (height < 80) height = 280;
-        var left = mouse.X / scale - width / 2;
-        var top = mouse.Y / scale - height - 12;
-        var waLeft = screen.WorkingArea.Left / scale;
-        var waTop = screen.WorkingArea.Top / scale;
-        var waRight = screen.WorkingArea.Right / scale;
-        var waBottom = screen.WorkingArea.Bottom / scale;
-        if (top < waTop) top = mouse.Y / scale + 12;
-        left = Math.Clamp(left, waLeft + 8, waRight - width - 8);
-        top = Math.Clamp(top, waTop + 8, waBottom - height - 8);
-        Left = left;
-        Top = top;
+        var work = SystemParameters.WorkArea;
+        Left = Math.Clamp(left, work.Left + 8, work.Right - width - 8);
+        Top = Math.Clamp(top, work.Top + 8, work.Bottom - height - 8);
         _suppressDeactivate = true;
         Show();
         Activate();
@@ -95,6 +119,7 @@ public partial class PopupWindow : Window
             ShowLabelBox.IsChecked = _store.ShowLabelInMenuBar;
             ShowAmountBox.IsChecked = _store.ShowAmountInMenuBar;
             ShowPercentBox.IsChecked = _store.ShowPercentInMenuBar;
+            FloatingBallBox.IsChecked = _store.ShowFloatingBall;
             LaunchBox.IsChecked = LaunchAtLogin.IsEnabled;
             if (RefreshCombo.SelectedItem is ComboBoxItem selected
                 && selected.Tag is int minutes
@@ -119,6 +144,7 @@ public partial class PopupWindow : Window
         ShowAmountBox.Content = L10n.ShowAmount;
         ShowPercentBox.Content = L10n.ShowPercent;
         LaunchBox.Content = L10n.LaunchAtLogin;
+        FloatingBallBox.Content = L10n.ShowFloatingBall;
         RefreshLabel.Text = L10n.RefreshEvery;
         SettingsExpander.Header = L10n.Settings;
         AdvancedExpander.Header = L10n.Advanced;
@@ -289,6 +315,7 @@ public partial class PopupWindow : Window
         _store.ShowLabelInMenuBar = ShowLabelBox.IsChecked == true;
         _store.ShowAmountInMenuBar = ShowAmountBox.IsChecked == true;
         _store.ShowPercentInMenuBar = ShowPercentBox.IsChecked == true;
+        _store.ShowFloatingBall = FloatingBallBox.IsChecked == true;
     }
 
     private void LaunchChanged(object sender, RoutedEventArgs e)

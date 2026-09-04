@@ -10,6 +10,9 @@ public sealed record Preferences
     public bool ShowPercentInMenuBar { get; init; } = true;
     public bool ShowAmountInMenuBar { get; init; } = true;
     public bool ShowLabelInMenuBar { get; init; }
+    public bool ShowFloatingBall { get; init; } = true;
+    public double? FloatingBallLeft { get; init; }
+    public double? FloatingBallTop { get; init; }
     public string ManualCookie { get; init; } = "";
 
     public Preferences With(
@@ -17,6 +20,9 @@ public sealed record Preferences
         bool? showPercentInMenuBar = null,
         bool? showAmountInMenuBar = null,
         bool? showLabelInMenuBar = null,
+        bool? showFloatingBall = null,
+        double? floatingBallLeft = null,
+        double? floatingBallTop = null,
         string? manualCookie = null)
         => this with
         {
@@ -24,6 +30,9 @@ public sealed record Preferences
             ShowPercentInMenuBar = showPercentInMenuBar ?? ShowPercentInMenuBar,
             ShowAmountInMenuBar = showAmountInMenuBar ?? ShowAmountInMenuBar,
             ShowLabelInMenuBar = showLabelInMenuBar ?? ShowLabelInMenuBar,
+            ShowFloatingBall = showFloatingBall ?? ShowFloatingBall,
+            FloatingBallLeft = floatingBallLeft ?? FloatingBallLeft,
+            FloatingBallTop = floatingBallTop ?? FloatingBallTop,
             ManualCookie = manualCookie ?? ManualCookie,
         };
 
@@ -48,9 +57,17 @@ public sealed class PreferenceStore
         try
         {
             if (!File.Exists(_path)) return new Preferences();
-            var loaded = JsonSerializer.Deserialize<Preferences>(File.ReadAllText(_path), JsonOptions.Default);
+            var text = File.ReadAllText(_path);
+            var loaded = JsonSerializer.Deserialize<Preferences>(text, JsonOptions.Default);
             if (loaded is null) return new Preferences();
-            return loaded with { RefreshMinutes = Preferences.ClampedRefresh(loaded.RefreshMinutes) };
+            var showBall = text.Contains("ShowFloatingBall", StringComparison.OrdinalIgnoreCase)
+                ? loaded.ShowFloatingBall
+                : true;
+            return loaded with
+            {
+                RefreshMinutes = Preferences.ClampedRefresh(loaded.RefreshMinutes),
+                ShowFloatingBall = showBall,
+            };
         }
         catch
         {

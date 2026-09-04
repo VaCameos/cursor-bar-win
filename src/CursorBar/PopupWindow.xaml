@@ -52,7 +52,8 @@
                     <CheckBox x:Name="ShowLabelBox" Margin="0,0,0,6" Checked="PreferenceChanged" Unchecked="PreferenceChanged"/>
                     <CheckBox x:Name="ShowAmountBox" Margin="0,0,0,6" Checked="PreferenceChanged" Unchecked="PreferenceChanged"/>
                     <CheckBox x:Name="ShowPercentBox" Margin="0,0,0,6" Checked="PreferenceChanged" Unchecked="PreferenceChanged"/>
-                    <CheckBox x:Name="LaunchBox" Margin="0,0,0,8" Checked="LaunchChanged" Unchecked="LaunchChanged"/>
+                    <CheckBox x:Name="LaunchBox" Margin="0,0,0,6" Checked="LaunchChanged" Unchecked="LaunchChanged"/>
+                    <CheckBox x:Name="FloatingBallBox" Margin="0,0,0,8" Checked="PreferenceChanged" Unchecked="PreferenceChanged"/>
                     <DockPanel Margin="0,0,0,8">
                         <TextBlock x:Name="RefreshLabel" VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <ComboBox x:Name="RefreshCombo" SelectionChanged="RefreshMinutesChanged"/>
