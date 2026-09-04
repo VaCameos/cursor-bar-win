@@ -10,7 +10,7 @@ public sealed record Preferences
     public bool ShowPercentInMenuBar { get; init; } = true;
     public bool ShowAmountInMenuBar { get; init; } = true;
     public bool ShowLabelInMenuBar { get; init; }
-    public bool ShowFloatingBall { get; init; } = true;
+    public bool ShowFloatingBall { get; init; }
     public double? FloatingBallLeft { get; init; }
     public double? FloatingBallTop { get; init; }
     public string ManualCookie { get; init; } = "";
@@ -57,17 +57,9 @@ public sealed class PreferenceStore
         try
         {
             if (!File.Exists(_path)) return new Preferences();
-            var text = File.ReadAllText(_path);
-            var loaded = JsonSerializer.Deserialize<Preferences>(text, JsonOptions.Default);
+            var loaded = JsonSerializer.Deserialize<Preferences>(File.ReadAllText(_path), JsonOptions.Default);
             if (loaded is null) return new Preferences();
-            var showBall = text.Contains("ShowFloatingBall", StringComparison.OrdinalIgnoreCase)
-                ? loaded.ShowFloatingBall
-                : true;
-            return loaded with
-            {
-                RefreshMinutes = Preferences.ClampedRefresh(loaded.RefreshMinutes),
-                ShowFloatingBall = showBall,
-            };
+            return loaded with { RefreshMinutes = Preferences.ClampedRefresh(loaded.RefreshMinutes) };
         }
         catch
         {

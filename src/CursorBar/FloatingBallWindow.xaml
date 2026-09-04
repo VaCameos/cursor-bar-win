@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Cursor Bar"
-        Width="68"
-        Height="68"
+        Width="72"
+        Height="72"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -11,27 +11,53 @@
         Topmost="True"
         ResizeMode="NoResize"
         SnapsToDevicePixels="True"
-        UseLayoutRounding="True">
-    <Grid>
-        <Ellipse Width="56" Height="56" HorizontalAlignment="Center" VerticalAlignment="Center">
+        UseLayoutRounding="True"
+        Cursor="Hand">
+    <Grid x:Name="Root" RenderTransformOrigin="0.5,0.5">
+        <Grid.RenderTransform>
+            <ScaleTransform x:Name="HoverScale" ScaleX="1" ScaleY="1"/>
+        </Grid.RenderTransform>
+        <Ellipse Width="52" Height="52" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Ellipse.Fill>
-                <SolidColorBrush Color="#E6282C34"/>
+                <RadialGradientBrush GradientOrigin="0.32,0.22" Center="0.5,0.5" RadiusX="0.78" RadiusY="0.78">
+                    <GradientStop Color="#F2F4F6FA" Offset="0"/>
+                    <GradientStop Color="#E8EEF1F6" Offset="0.55"/>
+                    <GradientStop Color="#DCE4E8F0" Offset="1"/>
+                </RadialGradientBrush>
             </Ellipse.Fill>
             <Ellipse.Effect>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.35" Color="#FF000000"/>
+                <DropShadowEffect BlurRadius="14" ShadowDepth="2" Opacity="0.22" Color="#FF000000"/>
             </Ellipse.Effect>
         </Ellipse>
-        <Ellipse Width="56" Height="56" HorizontalAlignment="Center" VerticalAlignment="Center"
-                 Stroke="#40FFFFFF" StrokeThickness="1"/>
-        <StackPanel VerticalAlignment="Center" Margin="14,0">
-            <Grid Height="9">
-                <Border x:Name="TopTrack" CornerRadius="4.5" Background="#33FFFFFF"/>
-                <Border x:Name="TopFill" HorizontalAlignment="Left" CornerRadius="4.5" Width="0"/>
+        <Ellipse Width="52" Height="52" HorizontalAlignment="Center" VerticalAlignment="Center"
+                 StrokeThickness="1">
+            <Ellipse.Stroke>
+                <LinearGradientBrush StartPoint="0.2,0" EndPoint="0.8,1">
+                    <GradientStop Color="#88FFFFFF" Offset="0"/>
+                    <GradientStop Color="#33FFFFFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Ellipse.Stroke>
+        </Ellipse>
+        <Ellipse Width="28" Height="14" HorizontalAlignment="Center" VerticalAlignment="Top"
+                 Margin="0,12,0,0" IsHitTestVisible="False">
+            <Ellipse.Fill>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Color="#66FFFFFF" Offset="0"/>
+                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="34">
+            <Grid Height="7">
+                <Border CornerRadius="3.5" Background="#22000000"/>
+                <Border x:Name="TopFill" HorizontalAlignment="Left" CornerRadius="3.5" Width="0"/>
             </Grid>
-            <Grid Height="4" Margin="0,5,0,0">
-                <Border x:Name="BottomTrack" CornerRadius="2" Background="#22FFFFFF"/>
-                <Border x:Name="BottomFill" HorizontalAlignment="Left" CornerRadius="2" Width="0"/>
+            <Grid Height="3" Margin="0,3,0,0">
+                <Border CornerRadius="1.5" Background="#18000000"/>
+                <Border x:Name="BottomFill" HorizontalAlignment="Left" CornerRadius="1.5" Width="0"/>
             </Grid>
+            <TextBlock x:Name="PercentText" Margin="0,4,0,0" FontSize="10" FontWeight="SemiBold"
+                       HorizontalAlignment="Center" Foreground="#CC1A1A1A"/>
         </StackPanel>
     </Grid>
 </Window>

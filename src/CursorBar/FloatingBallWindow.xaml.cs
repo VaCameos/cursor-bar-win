@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Color = System.Windows.Media.Color;
 using CursorBar.Core;
 using Size = System.Windows.Size;
 
@@ -33,7 +34,8 @@ public partial class FloatingBallWindow : Window
         PreviewMouseLeftButtonDown += OnPointerDown;
         PreviewMouseMove += OnPointerMove;
         PreviewMouseLeftButtonUp += OnPointerUp;
-        MouseLeave += (_, _) => EndDrag(save: _moved);
+        MouseLeave += OnMouseLeave;
+        MouseEnter += (_, _) => SetHover(true);
         ToolTip = L10n.FloatingBallHint;
         Render();
     }
@@ -45,19 +47,23 @@ public partial class FloatingBallWindow : Window
         var dimmed = _store.Snapshot is null;
         var primary = _store.StatusPercent;
         var secondary = _store.SecondaryPercent;
-        var trackWidth = 40.0;
-        Opacity = dimmed ? 0.72 : 1;
+        const double trackWidth = 34;
+        Opacity = dimmed ? 0.78 : 1;
         if (unlimited)
         {
             TopFill.Width = trackWidth;
             TopFill.Background = new SolidColorBrush(TrayIconRenderer.MediaColor(UsageTone.Ok));
             BottomFill.Width = 0;
+            PercentText.Text = "∞";
+            PercentText.Foreground = new SolidColorBrush(Color.FromRgb(26, 26, 26));
             return;
         }
-        TopFill.Width = FillWidth(primary, trackWidth, 9);
+        TopFill.Width = FillWidth(primary, trackWidth, 7);
         TopFill.Background = new SolidColorBrush(TrayIconRenderer.MediaColor(Formatters.UsageColorThreshold(primary)));
-        BottomFill.Width = FillWidth(secondary, trackWidth, 4);
+        BottomFill.Width = FillWidth(secondary, trackWidth, 3);
         BottomFill.Background = new SolidColorBrush(TrayIconRenderer.MediaColor(Formatters.UsageColorThreshold(secondary)));
+        PercentText.Text = dimmed ? "—" : Formatters.PercentLabel(primary);
+        PercentText.Foreground = new SolidColorBrush(TrayIconRenderer.MediaColor(Formatters.UsageColorThreshold(primary)));
     }
 
     internal void ApplyVisibility()
@@ -124,6 +130,18 @@ public partial class FloatingBallWindow : Window
         EndDrag(save: wasMoved);
         if (!wasMoved) _onClick();
         e.Handled = true;
+    }
+
+    private void OnMouseLeave(object sender, MouseEventArgs e)
+    {
+        EndDrag(save: _moved);
+        SetHover(false);
+    }
+
+    private void SetHover(bool on)
+    {
+        HoverScale.ScaleX = on ? 1.06 : 1;
+        HoverScale.ScaleY = on ? 1.06 : 1;
     }
 
     private void EndDrag(bool save)
